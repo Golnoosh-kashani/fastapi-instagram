@@ -8,7 +8,7 @@ session=sessionmaker(autoflush=False,autocommit=False,bind=engine)
 
 def get_db()->Generator:
     try:
-        db=session
+        db=session()
         yield db
     finally:
         db.close()   

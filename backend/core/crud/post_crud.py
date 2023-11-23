@@ -3,13 +3,11 @@ from fastapi import UploadFile, File, Form,Depends
 from uuid import uuid4
 import os
 import shutil
-from db.models.posts import Posts
+from db.models.posts import Post
 from sqlalchemy.orm import Session
 from db.session import get_db
-
-async def create_new_post(db: Session, owner_id,
-                          image: Optional[UploadFile] = File(...),  
-                          caption: Text = Form(...)):
+from datetime import datetime
+async def create_new_post(db: Session, owner_id, image: Optional[UploadFile] = File(...),caption: Text = Form(...)):
     if image:
         # Image file is uploaded
         filename = f"{uuid4()}-{image.filename}"
@@ -19,7 +17,7 @@ async def create_new_post(db: Session, owner_id,
             shutil.copyfileobj(image.file, buffer)
         
         # Create a new Posts instance with the file path and caption
-        new_post = Posts(image_path=file_path, caption=caption,owner_id=owner_id)
+        new_post = Post(caption=caption,image_path=file_path,date_created=datetime.now().date, owner_id=owner_id)
    
     else:
         # No image is provided

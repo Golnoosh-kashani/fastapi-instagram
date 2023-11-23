@@ -6,8 +6,11 @@ from core.hashing import hasher
 from schemas.users import user_input
 from db.models.users import User
 
-def create_new_user(db:Session,new_user:user_input):
-    new_user=User(username=new_user.username,email=new_user.email,hashed_password=hasher.get_password_hash(new_user.password))
+def create_new_user(user_data: user_input, db: Session ):
+   
+    #add user in database
+    new_user = User(username=user_data.username, email=user_data.email, 
+                    password=hasher.get_password_hash(user_data.password))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
