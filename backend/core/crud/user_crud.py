@@ -15,3 +15,35 @@ def create_new_user(user_data: user_input, db: Session ):
     db.commit()
     db.refresh(new_user)
     return new_user
+
+def delete_user_by_id(user_id,db:Session):
+    user=db.query(User).filter(User.id==user_id).first()
+    if user:
+        # If user is found, delete the user
+        db.delete(user)
+        db.commit()
+       # print(f"User with ID {user_id} has been deleted.")
+   
+
+def update_user_by_id(user_id:int ,db:Session,user_new_data:dict):
+     #param user_new_data dictionery contain user information
+     user=db.query(User).filter(User.id==user_id).first()
+     if user:
+          # Update user attributes
+          for key,value in user_new_data.items():
+               if hasattr(user,key):
+                setattr(user,key,value)
+
+          db.commit()
+          print(f"User with ID {user_id} has been updated.")
+     else:
+          print(f"User with ID {user_id} not found.")
+                 
+          
+
+     
+    
+    
+   
+
+   

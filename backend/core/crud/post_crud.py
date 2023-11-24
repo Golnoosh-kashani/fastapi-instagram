@@ -17,7 +17,7 @@ async def create_new_post(db: Session, owner_id, image: Optional[UploadFile] = F
             shutil.copyfileobj(image.file, buffer)
         
         # Create a new Posts instance with the file path and caption
-        new_post = Post(caption=caption,image_path=file_path,date_created=datetime.now().date, owner_id=owner_id)
+        new_post = Post(caption=caption,image_path=file_path,date_created=datetime.now(), owner_id=owner_id)
    
     else:
         # No image is provided

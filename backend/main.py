@@ -1,7 +1,7 @@
-from fastapi import FastAPI,Depends,Form,File,UploadFile
+from fastapi import FastAPI,Depends,Form,File,UploadFile,HTTPException
 from typing import Optional,Text
 from core.config import settings
-from core.crud.user_crud import create_new_user
+from core.crud.user_crud import create_new_user,delete_user_by_id
 from core.crud.post_crud import create_new_post
 from sqlalchemy.orm import Session
 from db.session import get_db
@@ -37,6 +37,22 @@ def CreateNewUser(user:user_input,db:Session=Depends(get_db)):
     add_user=create_new_user(user,db)
     return add_user
 
+
+@app.delete("/user")
+def DeleteUser(user_id:int,db:Session=Depends(get_db)):
+    #try:
+          delete_user=delete_user_by_id(user_id,db)
+          if delete_user:
+              return {"message": f"User with ID {user_id} has been deleted."}
+          else:
+              raise HTTPException(status_code=404, detail=f"User with ID {user_id} not found.")
+    #except Exception as e:
+             #raise HTTPException(status_code=500, detail="An error occurred while deleting the user.")
+
+
+
+
+
 @app.post("/post")
 async def Create_new_post_router(owner_id:int,db:Session=Depends(get_db),image:UploadFile = File(None), 
                           caption: Text = Form(...)):
@@ -45,3 +61,4 @@ async def Create_new_post_router(owner_id:int,db:Session=Depends(get_db),image:U
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
+
