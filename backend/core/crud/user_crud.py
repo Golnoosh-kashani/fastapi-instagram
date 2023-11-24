@@ -41,7 +41,9 @@ def update_user_by_id(user_id:int ,db:Session,user_new_data:dict):
                  
           
 
-     
+def get_all_users(db:Session):
+    users=db.query(User).all()
+    return users
     
     
    
