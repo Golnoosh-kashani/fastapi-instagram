@@ -6,7 +6,7 @@ from core.hashing import hasher
 from schemas.users import user_input
 from db.models.users import User
 
-def create_new_user(user_data: user_input, db: Session ):
+def create_new_user(user_data: user_input, db: Session):
    
     #add user in database
     new_user = User(username=user_data.username, email=user_data.email, 
@@ -17,27 +17,34 @@ def create_new_user(user_data: user_input, db: Session ):
     return new_user
 
 def delete_user_by_id(user_id,db:Session):
-    user=db.query(User).filter(User.id==user_id).first()
-    if user:
+    try:
+
+        user=db.query(User).filter(User.id==user_id).first()
+        if user:
         # If user is found, delete the user
-        db.delete(user)
-        db.commit()
-       # print(f"User with ID {user_id} has been deleted.")
+         db.delete(user)
+         db.commit()
+         return (f"User with ID {user_id} has been deleted.")
+        else:
+            return ("user with ID {user_id}not found")
+    except Exception as e:
+        return (f"Error in delete_user_by_id: {e}")
    
 
-def update_user_by_id(user_id:int ,db:Session,user_new_data:dict):
+def update_user_by_id(user_id:int,user_new_data:dict, db:Session):
      #param user_new_data dictionery contain user information
      user=db.query(User).filter(User.id==user_id).first()
      if user:
           # Update user attributes
           for key,value in user_new_data.items():
-               if hasattr(user,key):
+                # Skip updating 'date_joined' attribute and updating user attribute
+               if key != 'date_joined' and hasattr(user,key):
                 setattr(user,key,value)
 
           db.commit()
-          print(f"User with ID {user_id} has been updated.")
+          return (f"User with ID {user_id} has been updated.")
      else:
-          print(f"User with ID {user_id} not found.")
+          return (f"User with ID {user_id} not found.")
                  
           
 

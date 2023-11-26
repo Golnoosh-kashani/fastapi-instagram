@@ -1,5 +1,5 @@
 from typing import Optional,Text
-from fastapi import UploadFile, File, Form,Depends
+from fastapi import UploadFile, File, Form,Depends,HTTPException
 from uuid import uuid4
 import os
 import shutil
@@ -29,3 +29,30 @@ async def create_new_post(db: Session, owner_id, image: Optional[UploadFile] = F
     db.refresh(new_post)
 
     return new_post
+
+
+def delete_post_by_id(post_id:int,db:Session):
+    post=db.query(Post).filter(Post.id==post_id).first()
+    if not post:
+        raise HTTPException(status_code=404,detail="post not found")
+    
+    #delete post image
+    os.remove(post.image_path)
+    db.delete(post)
+    db.commit()
+    return {"Post deleted successfully"}
+
+def update_post_by_id(post_id:int,new_post_data:dict,db:Session):
+    post=db.query(Post).filter(Post.id==post_id)
+    if post:
+        # update post data and skip date_created attribute
+        for key,value in post:
+            if key != 'date_created' and hasattr(post,key):
+                setattr(post,key,value)
+
+        db.commit()
+        return(f"User with ID {post_id} has been updated.")
+
+def get_all_user_posts(owner_id:int,db:Session):
+    get_all_posts=db.query(Post).filter(Post.owner_id==owner_id).all()
+    return get_all_posts

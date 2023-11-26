@@ -1,11 +1,8 @@
-from fastapi import FastAPI,Depends,Form,File,UploadFile,HTTPException
-from typing import Optional,Text
+from fastapi import FastAPI
 from core.config import settings
-from core.crud.user_crud import create_new_user,delete_user_by_id
-from core.crud.post_crud import create_new_post
+from core.routers.user_routers import router as user_routers
+from core.routers.post_routers import router as post_routers
 from sqlalchemy.orm import Session
-from db.session import get_db
-from schemas.users import user_input
 from db.base_class import Base
 from db.session import engine
 import os
@@ -19,6 +16,8 @@ def create_tables():
 
 def start_application():
     app=FastAPI(title=settings.PEROJECT_TITLE,version=settings.PEROJECT_VERSION)
+    app.include_router(user_routers)
+    app.include_router(post_routers)
     create_tables()
     os.makedirs('images', exist_ok=True)
 
@@ -32,33 +31,10 @@ def hello_api():
     
     return{"details":"hello api"}
 
-@app.post("/")
-def CreateNewUser(user:user_input,db:Session=Depends(get_db)):
-    add_user=create_new_user(user,db)
-    return add_user
-
-
-@app.delete("/user")
-def DeleteUser(user_id:int,db:Session=Depends(get_db)):
-    #try:
-          delete_user=delete_user_by_id(user_id,db)
-          if delete_user:
-              return {"message": f"User with ID {user_id} has been deleted."}
-          else:
-              raise HTTPException(status_code=404, detail=f"User with ID {user_id} not found.")
-    #except Exception as e:
-             #raise HTTPException(status_code=500, detail="An error occurred while deleting the user.")
 
 
 
 
 
-@app.post("/post")
-async def Create_new_post_router(owner_id:int,db:Session=Depends(get_db),image:UploadFile = File(None), 
-                          caption: Text = Form(...)):
-    
-    new_post=await create_new_post(db=db,owner_id=owner_id,image=image,caption=caption)
-    db.add(new_post)
-    db.commit()
-    db.refresh(new_post)
+
 

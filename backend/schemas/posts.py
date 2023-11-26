@@ -6,12 +6,12 @@ class posts_input(BaseModel):
     id:int
     caption:Text
     image_path:str
-    date_created=date
+    date_created:date
     owner_id:int
 
 class show_post(BaseModel):
     caption:Text
-    image_path=str
-    date_created=date
+    image_path:str
+    date_created:date
     class config:
         orm_mode=True
