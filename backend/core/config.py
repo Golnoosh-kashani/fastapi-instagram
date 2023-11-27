@@ -15,6 +15,10 @@ class Settings:
     POSTGRES_PORT=os.getenv("POSTGRES_PORT",default="5432")
     POSTGRES_DB=os.getenv("POSTGRES_DB",default="db_instagram") 
     POSTGRES_DATABASE_URL=f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    SECRET_KEY:str=os.getenv("SECRET_KEY")
+    ALGORITHM="HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES = 30
+    
 
 
 settings=Settings()
