@@ -9,3 +9,4 @@ class Post(Base):
     date_created=Column(Date)
     owner_id=Column(Integer,ForeignKey('user.id'))
     owner=relationship("User",back_populates="posts")
+    comments=relationship("Comment",back_populates="post")
