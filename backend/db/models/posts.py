@@ -1,7 +1,7 @@
 from sqlalchemy import Column,String,Integer,Date,ForeignKey,Text
 from sqlalchemy.orm import relationship
 from db.base_class import Base
-
+from db.models.comments import Comment
 class Post(Base):
     id=Column(Integer,primary_key=True,index=True)
     caption=Column(Text)

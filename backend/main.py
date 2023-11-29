@@ -11,7 +11,7 @@ import sys
 print(sys.path)
 
 def create_tables():
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(engine)
 
 
 
