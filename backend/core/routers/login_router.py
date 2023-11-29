@@ -9,8 +9,11 @@ router=APIRouter()
 @router.post("/login")
 def user_login(db:Session=Depends(get_db),form_data:OAuth2PasswordRequestForm=Depends()):
     login_token=login_user(db=db,form_data=form_data)
+    
     if not login_token:
         return{"an error happen"}
+    else:
+        return {"login has been successful"}
         
 
 
