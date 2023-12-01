@@ -2,11 +2,12 @@
 from schemas.users import user_input
 from sqlalchemy.orm import Session
 from fastapi import Depends,HTTPException,status
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm,OAuth2PasswordBearer
 from core.hashing import hasher
 from schemas.users import user_input
 from db.models.users import User
 from datetime import timedelta
+from db.session import get_db
 from core.security import create_access_token
 
 def create_new_user(user_data: user_input, db: Session):
@@ -66,8 +67,3 @@ def login_user(db:Session,form_data:OAuth2PasswordRequestForm):
     access_token=create_access_token(user_data={"sub":user.username},expire_delta=access_token_expires)
     return {"access_token":access_token,"token_type":"bearer"}
     
-    
-    
-
-
-   
