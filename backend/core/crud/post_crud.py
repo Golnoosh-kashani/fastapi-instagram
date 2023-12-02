@@ -5,6 +5,7 @@ import os
 import shutil
 from db.models.posts import Post
 from sqlalchemy.orm import Session
+from db.models.users import User
 from db.session import get_db
 from datetime import datetime
 async def create_new_post(db: Session, owner_id, image: Optional[UploadFile] = File(...),caption: Text = Form(...)):
@@ -31,16 +32,27 @@ async def create_new_post(db: Session, owner_id, image: Optional[UploadFile] = F
     return new_post
 
 
-def delete_post_by_id(post_id:int,db:Session):
+def delete_post_by_id(post_id:int,db:Session,current_user:User):
     post=db.query(Post).filter(Post.id==post_id).first()
-    if not post:
-        raise HTTPException(status_code=404,detail="post not found")
     
-    #delete post image
-    os.remove(post.image_path)
+    # Check if the post exists
+    if not post:
+        return False
+
+    # Check if the current user is the owner of the post
+    if current_user.id != post.owner_id:
+        return False
+
+    try:
+        # Delete post image
+        os.remove(post.image_path)
+    except OSError as e:
+        print(f"A OSError occurred: {e}")
+
+    # Delete the post from the database and commit the transaction
     db.delete(post)
     db.commit()
-    return {"Post deleted successfully"}
+    return True
 
 def update_post_by_id(post_id:int,new_post_data:dict,db:Session):
     post=db.query(Post).filter(Post.id==post_id)

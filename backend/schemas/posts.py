@@ -8,10 +8,15 @@ class posts_input(BaseModel):
     image_path:str
     date_created:date
     owner_id:int
+    #class config:
+        #orm_mode=True
 
-class show_post(BaseModel):
-    caption:Text
-    image_path:str
-    date_created:date
-    class config:
+class show_post(posts_input):
+     
+     
+     caption:Text
+     image_path:str
+     date_created:date
+     owner_id:int
+     class config:
         orm_mode=True

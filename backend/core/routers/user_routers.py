@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from schemas.users import user_input
 from db.session import get_db
 from db.models.users import User
-from routers.login_router import get_current_user
+from core.routers.login_router import get_current_user
 from core.crud.user_crud import create_new_user,delete_user_by_id,update_user_by_id,get_all_users
 
 router=APIRouter()
