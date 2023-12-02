@@ -24,24 +24,26 @@ def user_login(db:Session=Depends(get_db),form_data:OAuth2PasswordRequestForm=De
 
 oauth2_scheme=OAuth2PasswordBearer(tokenUrl="/login")
 def get_current_user(db:Session=Depends(get_db),token:str=Depends(oauth2_scheme)):
-        credentials_exception = HTTPException(
+    print(f"Received token: {token}")
+    credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-        try:
-            payload=jwt.decode(token,settings.SECRET_KEY,algorithms=settings.ALGORITHM)
-            username=payload.get("sub")
-            if username is None:
-                return credentials_exception
-            
-        except JWTError:
-            return  credentials_exception  
-    
-        user=db.query(User).filter(User.username==username).first()
-        if user is None:
+    parts = token.split('.')
+    if len(parts) != 3:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token format")
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=settings.ALGORITHM)
+        username = payload.get("sub")
+        if username is None:
             raise credentials_exception
-        return user
+    except JWTError as e:
+         print(f"JWT Error: {e}")
+         raise credentials_exception
 
-
+    user = db.query(User).filter(User.username == username).first()
+    if user is None:
+        raise credentials_exception
+    return user
    
