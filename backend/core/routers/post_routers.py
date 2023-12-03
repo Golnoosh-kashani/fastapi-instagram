@@ -2,7 +2,7 @@ from fastapi import APIRouter,Depends,UploadFile,Form,File,HTTPException
 from sqlalchemy.orm import Session
 from typing import Text
 from schemas.posts import show_post
-from core.crud.post_crud import create_new_post,update_post_by_id,delete_post_by_id,get_all_user_posts
+from core.crud.post_crud import create_new_post,update_post_by_id,delete_post_by_id,get_all_user_posts,update_post_image_by_id
 from db.session import get_db
 from core.routers.login_router import get_current_user
 from db.models.users import User
@@ -29,7 +29,7 @@ async def Create_new_post_router(owner_id:int,db:Session=Depends(get_db),image:U
     
 
 @router.put("/update-post/{post_id}")
-def update_post_by_id(post_id:int,post_new_data:dict,db:Session=Depends(get_db),current_user:User=Depends(get_current_user)):
+def update_post(post_id:int,post_new_data:dict,db:Session=Depends(get_db),current_user:User=Depends(get_current_user)):
     if current_user.id !=Post.owner_id:
          raise HTTPException(status_code=403, detail="Not authorized to perform this action")
 
@@ -38,6 +38,11 @@ def update_post_by_id(post_id:int,post_new_data:dict,db:Session=Depends(get_db),
           return {"message":f"post with ID {post_id} has been updated"}
      
 
+@router.put("/update-post-image/{post_id}")
+def update_post_image(post_id:int,image:UploadFile=File(None),db:Session=Depends(get_db)):
+    update_image=update_post_image_by_id(post_id=post_id,image=image,db=db)
+    if update_image:
+        return {"message":f"post image with ID {post_id} has been updated"}
     
   
        

@@ -65,6 +65,29 @@ def update_post_by_id(post_id:int,new_post_data:dict,db:Session):
         db.commit()
         return(f"User with ID {post_id} has been updated.")
 
+def update_post_image_by_id(post_id:int,image:UploadFile,db:Session):
+    post=db.query(Post).filter(Post.id==post_id).first()
+    if post:
+        # Image file is uploaded
+        filename = f"{uuid4()}-{image.filename}"
+        file_path = f"images/{filename}"
+
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(image.file, buffer)
+        
+        # update  Posts  with new file image
+        post.image_path=file_path
+        db.commit()
+        
+    else:
+        # No image is provided
+        raise ValueError("An image file  must be provided")
+
+   
+
+
+
+
 def get_all_user_posts(owner_id:int,db:Session):
     get_all_posts=db.query(Post).filter(Post.owner_id==owner_id).all()
     return get_all_posts
