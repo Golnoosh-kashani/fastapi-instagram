@@ -3,7 +3,7 @@ from sqlalchemy import Integer,String,Column,ForeignKey
 from sqlalchemy.orm import relationship
 
 class Comment(Base):
-    id=Column(Integer,primary_key=True,index=True)
+    id=Column(Integer,primary_key=True,index=True,autoincrement=True)
     text=Column(String,index=True)
     user_id=Column(Integer,ForeignKey("user.id"))
     post_id=Column(Integer,ForeignKey("post.id"))
