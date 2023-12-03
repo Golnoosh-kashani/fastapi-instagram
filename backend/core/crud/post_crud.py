@@ -54,8 +54,11 @@ def delete_post_by_id(post_id:int,db:Session,current_user:User):
     db.commit()
     return True
 
-def update_post_by_id(post_id:int,new_post_data:dict,db:Session):
+def update_post_by_id(post_id:int,new_post_data:dict,db:Session,current_user:User):
     post=db.query(Post).filter(Post.id==post_id)
+    # Check if the current user is the owner of the post
+    if current_user.id != post.owner_id:
+        return False
     if post:
         # update post data and skip date_created attribute
         for key,value in post:
