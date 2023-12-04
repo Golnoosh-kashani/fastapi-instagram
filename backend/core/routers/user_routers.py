@@ -14,7 +14,7 @@ def CreateNewUser(user:user_input,db:Session=Depends(get_db)):
     return add_user
 
 
-@router.delete("/user")
+@router.delete("/user/{user_id}")
 def DeleteUser(user_id:int,current_user:User=Depends(get_current_user),db:Session=Depends(get_db)):
     try:
           if current_user.id !=user_id:

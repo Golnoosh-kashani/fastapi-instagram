@@ -2,7 +2,7 @@ from pydantic import BaseModel,EmailStr
 from datetime import datetime,date
 
 class user_input(BaseModel):
-    id:int
+    #id:int
     username:str
     email:EmailStr
     password:str
