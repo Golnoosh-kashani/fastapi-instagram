@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from db.base_class import Base
 from routers.base_router import api_router
 from db.models.users import User
+from db.models.posts import Post
 from db.session import get_db
 
 
@@ -34,6 +35,8 @@ def app()->Generator[FastAPI, Any, None]:
     yield app
     Base.metadata.drop_all(engine)
 
+
+
 pytest.fixture(scope="function")
 def db_session(app:FastAPI)-> Generator[sessiontesting, Any, None]:
     connection=engine.connect()
@@ -56,7 +59,11 @@ def create_test_user(db_session:sessiontesting):
     db_session.commit()
 
 
-
+pytest.fixture(scope="function")
+def test_post_id(db_session:sessiontesting,create_test_user:new_user):
+    try:
+        test_post=Post(caption="Test Caption",image_path="test_image.jpg",owner_id=create_test_user)
+    
 
 
 
