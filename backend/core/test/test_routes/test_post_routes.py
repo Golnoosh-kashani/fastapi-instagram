@@ -20,4 +20,10 @@ def test_create_post(create_test_user,client):
     assert response.json()["caption"] == "Test Caption"
     assert response.status_code==200
 
-def test_update_post()    
+def test_update_post(test_post_id,client):
+    new_data = {"caption": "Updated caption"}
+    response = client.put(f"/posts/{test_post_id}", json=new_data)
+
+    assert response.status_code == 200
+    assert response.json() == {"message": f"post with ID {test_post_id} has been updated"}
+    

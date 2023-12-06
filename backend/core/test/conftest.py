@@ -7,13 +7,13 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from db.base_class import Base
-from routers.base_router import api_router
+from core.routers.base_router import api_router
 from db.models.users import User
 from db.models.posts import Post
 from db.session import get_db
 
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) 
+#sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) 
 
 def start_application():
     router=FastAPI()
@@ -60,9 +60,20 @@ def create_test_user(db_session:sessiontesting):
 
 
 pytest.fixture(scope="function")
-def test_post_id(db_session:sessiontesting,create_test_user:new_user):
+def test_post_id(db_session:sessiontesting,create_test_user):
     try:
         test_post=Post(caption="Test Caption",image_path="test_image.jpg",owner_id=create_test_user)
+        db_session.add(test_post)
+        db_session.commit()
+        db_session.refresh(test_post)
+        yield test_post.id
+    finally:
+        # Optionally, delete the post after the test
+        db_session.delete(test_post)
+        db_session.commit()
+        db_session.close()
+
+
     
 
 
