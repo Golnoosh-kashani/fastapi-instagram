@@ -8,7 +8,7 @@ from core.crud.user_crud import create_new_user,delete_user_by_id,update_user_by
 
 router=APIRouter()
 
-@router.post("/")
+@router.post("/create-user")
 def CreateNewUser(user:user_input,db:Session=Depends(get_db)):
     add_user=create_new_user(user,db)
     return add_user
